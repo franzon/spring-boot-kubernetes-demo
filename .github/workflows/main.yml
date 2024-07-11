@@ -31,9 +31,9 @@ jobs:
         run: ./gradlew test
 
       - name: Pushing to Oracle Container Registry
-        run: echo "Container image URL:${{ env.REGISTRY_IMAGE_URL }}:${{ github.ref_name }}"
+        run: echo "Container image URL:$REGISTRY_IMAGE_URL:${{ github.ref_name }}"
         
-      # - name: Build and push container image using Google JIB
-      #   run: ./gradlew jib --image 123
+      - name: Build and push container image using Google JIB
+        run: ./gradlew jib --image $REGISTRY_IMAGE_URL:${{ github.ref_name }} 
 
 
