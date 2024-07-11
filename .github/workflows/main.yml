@@ -1,0 +1,39 @@
+name: Build and Deploy
+
+on:
+  push:
+    tags:
+      - '*'
+env:
+  REGISTRY_IMAGE_URL: ${{ vars.REGISTRY_IMAGE_URL }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Run tests
+        run: ./gradlew test
+
+      - name: Pushing to Oracle Container Registry
+        run: echo "Container image URL:${{ env.REGISTRY_IMAGE_URL }}:${{ github.ref_name }}"
+        
+      # - name: Build and push container image using Google JIB
+      #   run: ./gradlew jib --image 123
+
+
