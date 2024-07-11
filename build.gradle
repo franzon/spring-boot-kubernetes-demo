@@ -48,8 +48,8 @@ jib {
     }
     to {
         auth {
-            username = '$System.env.REGISTRY_USERNAME'
-            password = '$System.env.REGISTRY_PASSWORD'
+            username = ${env.REGISTRY_USERNAME}
+            password = ${env.REGISTRY_PASSWORD}
         }
     }
     container {
