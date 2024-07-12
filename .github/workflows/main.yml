@@ -8,6 +8,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: production
+    env:
+      REGISTRY_IMAGE_URL: ${{ vars.REGISTRY_IMAGE_URL }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,26 +28,22 @@ jobs:
         
       - name: Build with Gradle
         run: ./gradlew build
-        env:
-          REGISTRY_IMAGE_URL: ${{ vars.REGISTRY_IMAGE_URL }}
-          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
-          
+
       - name: Run tests
         run: ./gradlew test
 
-  package:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Pushing to Oracle Container Registry
         run: echo "Container image URL:$REGISTRY_IMAGE_URL:${{ github.ref_name }}"
-        env:
-          REGISTRY_IMAGE_URL: ${{ vars.REGISTRY_IMAGE_URL }}
         
       - name: Build and push container image using Google JIB
         run: ./gradlew jib --image $REGISTRY_IMAGE_URL:${{ github.ref_name }} 
-        env:
-          REGISTRY_IMAGE_URL: ${{ vars.REGISTRY_IMAGE_URL }}
-          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
-          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+
+  # package:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Pushing to Oracle Container Registry
+  #       run: echo "Container image URL:$REGISTRY_IMAGE_URL:${{ github.ref_name }}"
+        
+  #     - name: Build and push container image using Google JIB
+  #       run: ./gradlew jib --image $REGISTRY_IMAGE_URL:${{ github.ref_name }} 
