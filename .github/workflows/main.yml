@@ -41,11 +41,27 @@ jobs:
         run: ./gradlew jib --image $REGISTRY_IMAGE_URL:${{ github.ref_name }} 
 
   deploy:
-    needs: build
+    needs: build-and-publish
     runs-on: ubuntu-latest
+    environment: production
+    env:
+      K8S_URL: ${{ secrets.K8S_URL }}
+      K8S_SECRET: ${{ secrets.K8S_SECRET }}
     steps:
-      - name: Pushing to Oracle Container Registry
-        run: echo "Container image URL:$REGISTRY_IMAGE_URL:${{ github.ref_name }}"
-        
-      - name: Build and push container image using Google JIB
-        run: ./gradlew jib --image $REGISTRY_IMAGE_URL:${{ github.ref_name }} 
+      - name: Set up Kubectl
+        uses: azure/k8s-set-context@v4
+        with:
+           method: service-account
+           k8s-url: $K8S_URL
+           k8s-secret: $K8S_SECRET
+
+      - name: Deploy to kubernetes cluster
+        uses: Azure/k8s-deploy@v5
+        with:
+           action: deploy
+           manifests: |
+              infra/deployment.yml
+           images: |
+              $REGISTRY_IMAGE_URL:${{ github.ref_name }} 
+
+      
