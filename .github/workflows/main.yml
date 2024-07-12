@@ -31,9 +31,6 @@ jobs:
 
       - name: Run tests
         run: ./gradlew test
-
-      - name: Pushing to Oracle Container Registry
-        run: echo "Container image URL:$REGISTRY_IMAGE_URL:${{ github.ref_name }}"
         
       - name: Build and push container image using Google JIB
         run: ./gradlew jib --image $REGISTRY_IMAGE_URL:${{ github.ref_name }} 
