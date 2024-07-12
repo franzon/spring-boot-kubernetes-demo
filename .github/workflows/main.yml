@@ -47,6 +47,10 @@ jobs:
     needs: build-and-publish
     runs-on: ubuntu-latest
     environment: production
+    env:
+      REGISTRY_IMAGE_URL: ${{ vars.REGISTRY_IMAGE_URL }}
+      REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+      REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
