@@ -5,8 +5,13 @@ on:
     tags:
       - '*'
 
+env:
+  BASE_IMAGE: amazoncorretto:21.0.3-alpine3.19
+  JAVA_VERSION: '21'
+  JAVA_DISTRIBUTION: 'corretto'
+
 jobs:
-  build:
+  build-and-publish:
     runs-on: ubuntu-latest
     environment: production
     env:
@@ -20,8 +25,8 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'corretto'
+          java-version: $JAVA_VERSION
+          distribution: $JAVA_DISTRIBUTION
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
@@ -35,12 +40,12 @@ jobs:
       - name: Build and push container image using Google JIB
         run: ./gradlew jib --image $REGISTRY_IMAGE_URL:${{ github.ref_name }} 
 
-  # package:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Pushing to Oracle Container Registry
-  #       run: echo "Container image URL:$REGISTRY_IMAGE_URL:${{ github.ref_name }}"
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pushing to Oracle Container Registry
+        run: echo "Container image URL:$REGISTRY_IMAGE_URL:${{ github.ref_name }}"
         
-  #     - name: Build and push container image using Google JIB
-  #       run: ./gradlew jib --image $REGISTRY_IMAGE_URL:${{ github.ref_name }} 
+      - name: Build and push container image using Google JIB
+        run: ./gradlew jib --image $REGISTRY_IMAGE_URL:${{ github.ref_name }} 
