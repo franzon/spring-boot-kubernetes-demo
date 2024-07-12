@@ -28,6 +28,7 @@ jobs:
         run: ./gradlew test
 
   package:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Pushing to Oracle Container Registry
