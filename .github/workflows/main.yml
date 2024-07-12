@@ -18,6 +18,9 @@ jobs:
       REGISTRY_IMAGE_URL: ${{ vars.REGISTRY_IMAGE_URL }}
       REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      BASE_IMAGE: amazoncorretto:21.0.3-alpine3.19
+      JAVA_VERSION: '21'
+      JAVA_DISTRIBUTION: 'corretto'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
