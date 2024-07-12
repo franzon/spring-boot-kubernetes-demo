@@ -23,7 +23,11 @@ jobs:
         
       - name: Build with Gradle
         run: ./gradlew build
-
+        env:
+          REGISTRY_IMAGE_URL: ${{ vars.REGISTRY_IMAGE_URL }}
+          REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+          
       - name: Run tests
         run: ./gradlew test
 
